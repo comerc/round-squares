@@ -2,7 +2,7 @@
 
 ## Техническое Задание
 
-https://github.com/round-squares/tech-task-for-interview
+https://github.com/round-squares/tech-task-for-interview/wiki
 
 ## Реализовано
 
