@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+
+/* customisation of Ant Design with Tailwind */
+.ant-btn-primary {
+  @apply bg-red-500;
+}
+
+html {
+  overflow: hidden;
+}
