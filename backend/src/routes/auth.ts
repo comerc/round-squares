@@ -6,11 +6,19 @@ import { hashPassword, comparePassword } from '@/utils/password.js'
 import { signToken } from '@/utils/jwt.js'
 import { determineRole } from '@/utils/role.js'
 import { authenticate } from '@/middleware/auth.js'
+import { emailService } from '@/services/email.js'
+import { generateOTP, otpStore } from '@/utils/otp.js'
 import { z } from 'zod'
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Valid email is required'),
+})
+
+const verifyOTPSchema = z.object({
+  loginKey: z.string().min(1, 'Login key is required'),
+  otpCode: z.string().min(5, 'OTP code must be 5 digits').max(5, 'OTP code must be 5 digits'),
 })
 
 const registerSchema = z.object({
@@ -62,6 +70,59 @@ export async function authRoutes(fastify: FastifyInstance) {
         user = existingUser
       }
 
+      // Генерируем OTP и отправляем на email
+      const otpCode = generateOTP()
+      const loginKey = otpStore.generateLoginKey(body.username)
+
+      try {
+        await emailService.sendOTP(body.email, otpCode)
+        otpStore.set(loginKey, otpCode, 1) // 1 минута
+
+        return {
+          requiresOTP: true,
+          loginKey,
+          message: 'OTP code sent to your email'
+        }
+      } catch (emailError) {
+        console.error('Failed to send OTP email:', emailError)
+        return reply.code(500).send({ error: 'Failed to send OTP email' })
+      }
+    } catch (error: any) {
+      // Обработка ошибок валидации Zod
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0]
+        return reply.code(400).send({ error: firstError.message || 'Ошибка валидации' })
+      }
+      throw error
+    }
+  })
+
+  fastify.post('/verify-2fa', async (request, reply) => {
+    try {
+      const body = verifyOTPSchema.parse(request.body)
+
+      // Проверяем OTP
+      const isValidOTP = otpStore.verify(body.loginKey, body.otpCode)
+
+      if (!isValidOTP) {
+        return reply.code(401).send({ error: 'Invalid or expired OTP code' })
+      }
+
+      // Извлекаем username из loginKey
+      const username = body.loginKey.split(':')[0]
+
+      // Получаем пользователя из БД
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.username, username))
+        .limit(1)
+
+      if (!user) {
+        return reply.code(404).send({ error: 'User not found' })
+      }
+
+      // Генерируем JWT токен
       const token = signToken({
         userId: user.id,
         username: user.username,
@@ -83,7 +144,6 @@ export async function authRoutes(fastify: FastifyInstance) {
         token,
       }
     } catch (error: any) {
-      // Обработка ошибок валидации Zod
       if (error.name === 'ZodError') {
         const firstError = error.errors[0]
         return reply.code(400).send({ error: firstError.message || 'Ошибка валидации' })

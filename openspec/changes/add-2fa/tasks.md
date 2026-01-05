@@ -67,9 +67,8 @@
 
 ## 5. Development Setup
 
-- [ ] Настроить Mailpit для локальной разработки
-- [ ] Добавить docker-compose.override.yml с Mailpit сервисом
-- [ ] Обновить README с инструкциями по запуску с Mailpit
+- [ ] Установить Mailpit согласно официальной документации
+- [ ] Обновить README с инструкциями по установке Mailpit
 
 ## 6. Documentation
 

@@ -13,9 +13,9 @@ function PageLayout() {
 
 function Footer() {
   return (
-    <div className="flex justify-between px-3 py-1">
+    <div className="flex justify-between px-3 py-1 text-gray-500">
       <div>The Last of Guss</div>
-      <div>v0.1</div>
+      <div>v0.2</div>
     </div>
   )
 }

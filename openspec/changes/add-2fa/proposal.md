@@ -23,7 +23,7 @@
   - `backend/src/services/` - email сервис с nodemailer
   - `frontend/src/api/auth.api.ts` - модификация login API для поддержки email + OTP
   - `frontend/src/pages/Login.tsx` - обновление формы логина для ввода email и OTP
-- New dependencies: nodemailer, mailpit для локальной разработки
+- New dependencies: nodemailer для отправки email
 - No database schema changes required
 
 ## Architecture Decisions
