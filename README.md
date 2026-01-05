@@ -49,7 +49,7 @@ npm install
 cp .env.example .env
 ```
 
-4. Запустите PostgreSQL через Docker Compose:
+4. Запустите сервисы через Docker Compose (включая PostgreSQL и Mailpit для email):
 
 ```bash
 cd ..
@@ -105,6 +105,27 @@ npm run dev
 ```
 
 Frontend будет доступен на `http://localhost:5173`
+
+## Email testing (Mailpit)
+
+Для тестирования email функциональности (включая 2FA) используется **Mailpit** - легковесный SMTP сервер для разработки.
+
+- **Web UI**: http://localhost:8025 - просмотр отправленных email
+- **SMTP порт**: 1025 - для отправки email из приложения
+
+Mailpit запускается автоматически вместе с PostgreSQL при выполнении `docker-compose up -d`.
+
+### Настройка email в приложении
+
+В `.env` файле backend добавьте:
+
+```env
+# Email configuration
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_SECURE=false
+FROM_EMAIL=noreply@guss-game.com
+```
 
 ## Тестовые пользователи
 
