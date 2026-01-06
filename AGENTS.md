@@ -40,10 +40,8 @@ OpenSpec creates a change folder (`openspec/changes/<change-id>/`) containing:
 
 ## 2. Task Transformation
 
-Once the change is approved, execute the agent command (not terminal command):
+Once the change is approved, execute the agent command:
 `/openspec-to-beads <change-id>`
-
-(This command is defined in `.cursor/commands/openspec-to-beads.md`)
 
 The agent must:
 
