@@ -37,7 +37,8 @@ OpenSpec creates a change folder (`openspec/changes/<change-id>/`) containing:
 - `specs/.../spec.md`: Requirements and acceptance criteria.
 
 **Agent Goal**: Edit these files until they represent a signable contract.
-**Do NOT proceed to Step 2 until explicitly asked to "create tasks", "start implementation", or "generate beads".**
+
+**DO NOT proceed to step 2 until you are explicitly told the keyword "Go!" in English.**
 
 ## 2. Task Transformation
 
