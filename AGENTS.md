@@ -66,10 +66,12 @@ Work loop:
 
 ## 4. Fixation
 
-When all tasks are complete:
+When all tasks are complete, execute the agent commands:
 
 1.  `/openspec-apply <change-id>`: Verify code meets specs.
-2.  `/openspec-archive <change-id>`: Archive the change.
+2.  Then, when ready, `/openspec-archive <change-id>`: Archive the change.
+
+(These are agent commands defined in `.cursor/commands/`. Do NOT run `openspec apply` in terminal as it does not exist.)
 
 ---
 
