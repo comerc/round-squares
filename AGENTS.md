@@ -29,7 +29,7 @@ We operate in a cycle: **OpenSpec (What) → Beads (How) → Code (Implementatio
 The user initiates with:
 `/openspec-proposal "Add 2FA authentication"`
 
-OpenSpec creates a change folder (`openspec/changes/<id>/`) containing:
+OpenSpec creates a change folder (`openspec/changes/<change-id>/`) containing:
 
 - `proposal.md`: Business value and scope.
 - `tasks.md`: High-level task list.
@@ -56,13 +56,11 @@ Result: A **live task graph in `.beads/`**, not just text.
 
 Work loop:
 
-```bash
-bd ready             # Check actionable tasks
-bd show <id>         # Get task context
-# Implement code
-bd close <id>        # Complete task
-bd sync              # Sync state
-```
+- `bd ready`: Check actionable tasks
+- `bd show <task-id>`: Get task context
+- Implement code
+- `bd close <task-id>`: Complete task
+- `bd sync`: Sync state
 
 **Rule**: Only work on tasks listed in `bd ready`.
 
@@ -77,13 +75,13 @@ When all tasks are complete:
 
 ## Agent Mental Checklist
 
-1.  **Start**: Is there an OpenSpec change?
+1.  **Start**: Is there an active OpenSpec change?
     - No? → Create one (`/openspec-proposal`).
-    - Yes? → Read it.
-2.  **Plan**: Is the plan in Beads?
-    - No? → Generate it (`/openspec-to-beads`).
-    - Yes? → Follow `bd ready`.
-3.  **Align**: Keep OpenSpec, Beads, and Code in sync.
+    - Yes? → Read `proposal.md` and `tasks.md`.
+2.  **Plan**: Are tasks tracked in Beads?
+    - No? → Generate graph (`/openspec-to-beads`).
+    - Yes? → Work from `bd ready`.
+3.  **Align**: Keep OpenSpec (Intent) ↔ Beads (Plan) ↔ Code (Reality) in sync.
 
 ---
 
@@ -97,12 +95,10 @@ When all tasks are complete:
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
 4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
-   git pull --rebase
-   bd sync
-   git push
-   git status  # MUST show "up to date with origin"
-   ```
+   - `git pull --rebase`
+   - `bd sync`
+   - `git push`
+   - `git status` - MUST show "up to date with origin"
 5. **Clean up** - Clear stashes, prune remote branches
 6. **Verify** - All changes committed AND pushed
 7. **Hand off** - Provide context for next session
@@ -123,6 +119,6 @@ Run `bd prime` for workflow context.
 
 - `bd ready` - Find unblocked work
 - `bd create "Title" --type task --priority 2` - Create ad-hoc issue
-- `bd close <id>` - Complete work
+- `bd close <task-id>` - Complete work
 - `bd sync` - Sync with git (run at session end)
   For full workflow details: `bd prime`
