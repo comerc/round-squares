@@ -48,8 +48,8 @@ Once the change is approved, execute the agent command:
 The agent must:
 
 1.  Read the change files.
-2.  Create a Beads Epic for the feature. Include a description summarizing the intent and referencing the change folder (e.g., "See openspec/changes/<change-id>/").
-3.  Create Beads Tasks for each item in `tasks.md`. Include a brief description for each task to provide context.
+2.  Create a Beads Epic for the feature. Include a short description summarizing the intent and referencing the change folder (e.g., "See openspec/changes/<change-id>/").
+3.  Create Beads Tasks for each item in `tasks.md`. Include a brief description for each task to provide context (why this issue exists and what needs to be done).
 4.  Set dependencies (e.g., Infra blocks Backend blocks Frontend).
 
 Result: A **live task graph in `.beads/`**, not just text.
@@ -124,4 +124,5 @@ Run `bd prime` for workflow context.
 - `bd create "Title" --type task --priority 2` - Create ad-hoc issue
 - `bd close <task-id>` - Complete work
 - `bd sync` - Sync with git (run at session end)
-  For full workflow details: `bd prime`
+
+For full workflow details: `bd prime`
