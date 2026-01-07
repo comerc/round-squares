@@ -16,8 +16,29 @@ export interface AuthResponse {
   token: string
 }
 
+export interface OtpRequest {
+  username: string
+  email: string
+  password: string
+}
+
+export interface OtpVerifyRequest {
+  username: string
+  email: string
+  otp: string
+}
+
+export interface OtpResponse {
+  otpSent: boolean
+  message?: string
+}
+
 export const authApi = {
   login: (credentials: LoginRequest) => api.post<AuthResponse>('/api/auth/login', credentials),
+
+  sendOtp: (data: OtpRequest) => api.post<OtpResponse>('/api/auth/login-with-otp', data),
+
+  verifyOtp: (data: OtpVerifyRequest) => api.post<AuthResponse>('/api/auth/verify-otp', data),
 
   register: (data: RegisterRequest) => api.post<AuthResponse>('/api/auth/register', data),
 

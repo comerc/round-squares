@@ -7,7 +7,10 @@ interface AuthState {
   user: User | null
   isLoading: boolean
   error: string | null
+  otpSent: boolean
   login: (username: string, password: string) => Promise<void>
+  sendOtp: (username: string, email: string, password: string) => Promise<void>
+  verifyOtp: (username: string, email: string, otp: string) => Promise<void>
   register: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
@@ -18,6 +21,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: false,
   error: null,
+  otpSent: false,
 
   login: async (username: string, password: string) => {
     set({ isLoading: true, error: null })
@@ -28,6 +32,35 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error: any) {
       set({
         error: error.message || 'Ошибка входа',
+        isLoading: false,
+      })
+      throw error
+    }
+  },
+
+  sendOtp: async (username: string, email: string, password: string) => {
+    set({ isLoading: true, error: null })
+    try {
+      await authApi.sendOtp({ username, email, password })
+      set({ otpSent: true, isLoading: false })
+    } catch (error: any) {
+      set({
+        error: error.message || 'Ошибка отправки OTP',
+        isLoading: false,
+      })
+      throw error
+    }
+  },
+
+  verifyOtp: async (username: string, email: string, otp: string) => {
+    set({ isLoading: true, error: null })
+    try {
+      const response = await authApi.verifyOtp({ username, email, otp })
+      set({ user: response.user, otpSent: false, isLoading: false })
+      setAuthenticated(true)
+    } catch (error: any) {
+      set({
+        error: error.message || 'Неверный OTP',
         isLoading: false,
       })
       throw error
