@@ -7,27 +7,63 @@ interface AuthState {
   user: User | null
   isLoading: boolean
   error: string | null
-  login: (username: string, password: string) => Promise<void>
+  require2fa: boolean
+  tempUsername: string | null
+  login: (username: string, password: string, email: string) => Promise<void>
+  verify2fa: (code: string) => Promise<void>
   register: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
   clearError: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isLoading: false,
   error: null,
+  require2fa: false,
+  tempUsername: null,
 
-  login: async (username: string, password: string) => {
+  login: async (username: string, password: string, email: string) => {
     set({ isLoading: true, error: null })
     try {
-      const response = await authApi.login({ username, password })
-      set({ user: response.user, isLoading: false })
-      setAuthenticated(true)
+      const response = await authApi.login({ username, password, email })
+      if (response.require2fa) {
+        set({ require2fa: true, tempUsername: username, isLoading: false })
+      } else if (response.user && response.token) {
+        // Fallback if 2FA is somehow not required (though spec says mandatory)
+        set({ user: response.user, isLoading: false, require2fa: false, tempUsername: null })
+        setAuthenticated(true)
+      }
     } catch (error: any) {
       set({
         error: error.message || 'Ошибка входа',
+        isLoading: false,
+      })
+      throw error
+    }
+  },
+
+  verify2fa: async (code: string) => {
+    const { tempUsername } = get()
+    if (!tempUsername) {
+      set({ error: 'Session expired, please login again' })
+      return
+    }
+
+    set({ isLoading: true, error: null })
+    try {
+      const response = await authApi.verify2fa({ username: tempUsername, code })
+      set({ 
+        user: response.user, 
+        isLoading: false, 
+        require2fa: false, 
+        tempUsername: null 
+      })
+      setAuthenticated(true)
+    } catch (error: any) {
+      set({
+        error: error.message || 'Invalid code',
         isLoading: false,
       })
       throw error
@@ -55,7 +91,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
-      set({ user: null })
+      set({ user: null, require2fa: false, tempUsername: null })
       setAuthenticated(false)
     }
   },
