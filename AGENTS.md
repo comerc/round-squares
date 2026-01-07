@@ -121,7 +121,7 @@ Run `bd prime` for workflow context.
 **Quick reference:**
 
 - `bd ready` - Find unblocked work
-- `bd create "Title" --type task --priority 2` - Create ad-hoc issue
+- `bd create "Title" --type task --priority 2 --description "..."` - Create ad-hoc issue
 - `bd close <task-id>` - Complete work
 - `bd sync` - Sync with git (run at session end)
 
